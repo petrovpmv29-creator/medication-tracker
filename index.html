@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дневник приёма таблеток</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .add-medication {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        .medications-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .medication-card {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 5px solid;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .medication-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .medication-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dose-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dose-input label {
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .dose-input input {
+            width: 100px;
+            text-align: center;
+        }
+
+        .trend {
+            font-size: 0.9em;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .trend-down {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .trend-up {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .chart-container {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .save-button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .save-button {
+            padding: 15px 50px;
+            font-size: 1.2em;
+        }
+
+        .today-date {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #a0aec0;
+            padding: 60px 20px;
+            font-size: 1.1em;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .medications-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💊 Дневник приёма таблеток</h1>
+            <p class="subtitle">Отслеживайте снижение дозировки</p>
+        </header>
+
+        <!-- Добавление нового лекарства -->
+        <div class="section">
+            <h2 class="section-title">➕ Добавить лекарство</h2>
+            <div class="add-medication">
+                <input type="text" id="newMedicationName" placeholder="Название лекарства" />
+                <button class="btn-primary" onclick="addMedication()">Добавить</button>
+            </div>
+        </div>
+
+        <!-- Текущая дата -->
+        <div class="today-date" id="todayDate"></div>
+
+        <!-- Список лекарств для ввода дозировки -->
+        <div class="section">
+            <h2 class="section-title">📝 Сегодняшняя дозировка</h2>
+            <div class="medications-list" id="medicationsList"></div>
+            
+            <div class="save-button-container">
+                <button class="btn-success save-button" onclick="saveTodayData()">💾 Сохранить данные за сегодня</button>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="section">
+            <h2 class="section-title">📊 Статистика</h2>
+            <div class="stats-summary" id="statsSummary"></div>
+            <div class="chart-container">
+                <canvas id="medicationChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Данные
+        let medications = [];
+        let records = [];
+        let chart = null;
+
+        // Цвета для графиков
+        const colors = [
+            '#3b82f6', '#ef4444', '#10b981', '#f59e0b', 
+            '#8b5cf6', '#ec4899', '#14b8a6', '#f97316',
+            '#06b6d4', '#84cc16', '#f43f5e', '#6366f1'
+        ];
+
+        // Загрузка данных при старте
+        window.onload = function() {
+            loadData();
+            updateTodayDate();
+            renderMedications();
+            updateChart();
+            updateStats();
+        };
+
+        // Обновление даты
+        function updateTodayDate() {
+            const today = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('todayDate').textContent = 
+                '📅 ' + today.toLocaleDateString('ru-RU', options);
+        }
+
+        // Загрузка данных из localStorage
+        function loadData() {
+            const savedMeds = localStorage.getItem('medications');
+            const savedRecords = localStorage.getItem('medRecords');
+            
+            if (savedMeds) {
+                medications = JSON.parse(savedMeds);
+            }
+            
+            if (savedRecords) {
+                records = JSON.parse(savedRecords);
+            }
+        }
+
+        // Сохранение данных в localStorage
+        function saveData() {
+            localStorage.setItem('medications', JSON.stringify(medications));
+            localStorage.setItem('medRecords', JSON.stringify(records));
+        }
+
+        // Добавление лекарства
+        function addMedication() {
+            const nameInput = document.getElementById('newMedicationName');
+            const name = nameInput.value.trim();
+            
+            if (name === '') {
+                alert('Пожалуйста, введите название лекарства');
+                return;
+            }
+            
+            const newMed = {
+                id: Date.now(),
+                name: name,
+                color: colors[medications.length % colors.length]
+            };
+            
+            medications.push(newMed);
+            saveData();
+            nameInput.value = '';
+            renderMedications();
+            updateChart();
+            updateStats();
+        }
+
+        // Удаление лекарства
+        function removeMedication(id) {
+            if (!confirm('Удалить это лекарство и всю его историю?')) {
+                return;
+            }
+            
+            medications = medications.filter(med => med.id !== id);
+            
+            // Удаляем данные из всех записей
+            records = records.map(record => {
+                const newDoses = { ...record.doses };
+                delete newDoses[id];
+                return { ...record, doses: newDoses };
+            });
+            
+            saveData();
+            renderMedications();
+            updateChart();
+            updateStats();
+        }
+
+        // Отрисовка списка лекарств
+        function renderMedications() {
+            const container = document.getElementById('medicationsList');
+            
+            if (medications.length === 0) {
+                container.innerHTML = '<div class="no-data">Добавьте первое лекарство, чтобы начать отслеживание</div>';
+                return;
+            }
+            
+            const today = getTodayString();
+            const todayRecord = records.find(r => r.date === today);
+            
+            container.innerHTML = medications.map(med => {
+                const currentDose = todayRecord ? (todayRecord.doses[med.id] || 0) : 0;
+                const trend = getTrend(med.id);
+                
+                return `
+                    <div class="medication-card" style="border-left-color: ${med.color}">
+                        <div class="medication-header">
+                            <div class="medication-name">
+                                <span class="color-indicator" style="background-color: ${med.color}"></span>
+                                ${med.name}
+                            </div>
+                            <button class="btn-danger" onclick="removeMedication(${med.id})">✕</button>
+                        </div>
+                        ${trend !== null ? `
+                            <div class="trend ${trend <= 0 ? 'trend-down' : 'trend-up'}">
+                                ${trend <= 0 ? '↓' : '↑'} ${Math.abs(trend).toFixed(1)} за неделю
+                            </div>
+                        ` : ''}
+                        <div class="dose-input">
+                            <label>Доза:</label>
+                            <input type="number" 
+                                   id="dose-${med.id}" 
+                                   value="${currentDose}"
+                                   min="0" 
+                                   step="0.5" 
+                                   placeholder="0">
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Получение тренда (изменение за последнюю неделю)
+        function getTrend(medId) {
+            const medRecords = records
+                .filter(r => r.doses[medId] !== undefined)
+                .slice(-7);
+            
+            if (medRecords.length < 2) return null;
+            
+            const firstDose = medRecords[0].doses[medId];
+            const lastDose = medRecords[medRecords.length - 1].doses[medId];
+            
+            return lastDose - firstDose;
+        }
+
+        // Получение сегодняшней даты в формате YYYY-MM-DD
+        function getTodayString() {
+            const today = new Date();
+            return today.toISOString().split('T')[0];
+        }
+
+        // Сохранение данных за сегодня
+        function saveTodayData() {
+            const today = getTodayString();
+            const doses = {};
+            
+            medications.forEach(med => {
+                const input = document.getElementById(`dose-${med.id}`);
+                doses[med.id] = parseFloat(input.value) || 0;
+            });
+            
+            const existingIndex = records.findIndex(r => r.date === today);
+            
+            if (existingIndex >= 0) {
+                records[existingIndex] = { date: today, doses: doses };
+            } else {
+                records.push({ date: today, doses: doses });
+                records.sort((a, b) => a.date.localeCompare(b.date));
+            }
+            
+            saveData();
+            updateChart();
+            updateStats();
+            renderMedications();
+            
+            alert('✅ Данные успешно сохранены!');
+        }
+
+        // Обновление графика
+        function updateChart() {
+            const canvas = document.getElementById('medicationChart');
+            const ctx = canvas.getContext('2d');
+            
+            if (chart) {
+                chart.destroy();
+            }
+            
+            if (medications.length === 0 || records.length === 0) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = '18px Arial';
+                ctx.fillStyle = '#a0aec0';
+                ctx.textAlign = 'center';
+                ctx.fillText('Нет данных для отображения', canvas.width / 2, canvas.height / 2);
+                return;
+            }
+            
+            // Подготовка данных для графика
+            const labels = records.map(r => {
+                const date = new Date(r.date);
+                return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+            });
+            
+            const datasets = medications.map(med => {
+                return {
+                    label: med.name,
+                    data: records.map(r => r.doses[med.id] || 0),
+                    borderColor: med.color,
+                    backgroundColor: med.color + '33',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                };
+            });
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: { size: 14 },
+                                padding: 15,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 13 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Дозировка',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Дата',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+        }
+
+        // Обновление статистики
+        function updateStats() {
+            const container = document.getElementById('statsSummary');
+            
+            if (records.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            const totalDays = records.length;
+            const lastRecord = records[records.length - 1];
+            const firstRecord = records[0];
+            
+            let totalReduction = 0;
+            medications.forEach(med => {
+                const first = firstRecord.doses[med.id] || 0;
+                const last = lastRecord.doses[med.id] || 0;
+                totalReduction += (first - last);
+            });
+            
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${totalDays}</div>
+                    <div class="stat-label">Дней отслеживания</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${medications.length}</div>
+                    <div class="stat-label">Видов лекарств</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${totalReduction > 0 ? '↓' : ''}${Math.abs(totalReduction).toFixed(1)}</div>
+                    <div class="stat-label">Общее снижение дозы</div>
+                </div>
+            `;
+        }
+
+        // Обработка Enter для добавления лекарства
+        document.getElementById('newMedicationName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addMedication();
+            }
+        });
+    </script>
+</body>
+</html>

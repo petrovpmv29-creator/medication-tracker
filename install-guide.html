@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 Как установить приложение</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .platform {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .platform h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+        
+        .steps li {
+            counter-increment: step-counter;
+            padding: 15px 15px 15px 50px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 10px;
+            position: relative;
+            line-height: 1.6;
+            font-size: 1.1em;
+        }
+        
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            background: #667eea;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .important {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+        
+        .important h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .important p {
+            color: #856404;
+            line-height: 1.6;
+            font-size: 1.05em;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+        
+        .success h3 {
+            color: #155724;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .checklist {
+            list-style: none;
+            color: #155724;
+        }
+        
+        .checklist li {
+            padding: 8px 0;
+            font-size: 1.05em;
+        }
+        
+        .checklist li::before {
+            content: "✅ ";
+            margin-right: 8px;
+        }
+        
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin: 20px 10px 0 0;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: transform 0.3s;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .files-section {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+        
+        .files-section h3 {
+            color: #1565c0;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .file-list {
+            list-style: none;
+        }
+        
+        .file-list li {
+            background: white;
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            font-family: monospace;
+            color: #1565c0;
+            font-size: 1.05em;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .platform h2 {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Инструкция по установке<br>"Дневник таблеток"</h1>
+        
+        <div class="files-section">
+            <h3>📦 Необходимые файлы</h3>
+            <p style="margin-bottom: 15px; color: #1565c0;">Все эти файлы должны быть в одной папке:</p>
+            <ul class="file-list">
+                <li>medication-tracker-mobile.html</li>
+                <li>manifest.json</li>
+                <li>sw.js</li>
+                <li>icon-192.png</li>
+                <li>icon-512.png</li>
+            </ul>
+        </div>
+        
+        <div class="platform">
+            <h2>🍎 iPhone (iOS)</h2>
+            <ol class="steps">
+                <li>Откройте файл <strong>medication-tracker-mobile.html</strong> в браузере <strong>Safari</strong></li>
+                <li>Нажмите кнопку "<strong>Поделиться</strong>" (квадрат со стрелкой вверх) внизу экрана</li>
+                <li>Прокрутите вниз и выберите "<strong>На экран «Домой»</strong>"</li>
+                <li>Нажмите "<strong>Добавить</strong>" в правом верхнем углу</li>
+                <li>Готово! Иконка появится на домашнем экране 🎉</li>
+            </ol>
+        </div>
+        
+        <div class="platform">
+            <h2>🤖 Android</h2>
+            <ol class="steps">
+                <li>Откройте файл <strong>medication-tracker-mobile.html</strong> в браузере <strong>Chrome</strong></li>
+                <li>Появится уведомление "<strong>Установить приложение</strong>" - нажмите на него</li>
+                <li>Или нажмите на три точки (⋮) → "<strong>Добавить на главный экран</strong>"</li>
+                <li>Нажмите "<strong>Установить</strong>"</li>
+                <li>Готово! Иконка появится на домашнем экране 🎉</li>
+            </ol>
+        </div>
+        
+        <div class="platform">
+            <h2>💻 Компьютер (Windows/Mac/Linux)</h2>
+            <ol class="steps">
+                <li>Откройте файл в браузере <strong>Chrome</strong> или <strong>Edge</strong></li>
+                <li>В адресной строке справа появится значок установки (⊕)</li>
+                <li>Нажмите на него и выберите "<strong>Установить</strong>"</li>
+                <li>Приложение откроется в отдельном окне 🎉</li>
+            </ol>
+        </div>
+        
+        <div class="important">
+            <h3>⚠️ Важно!</h3>
+            <p><strong>Все файлы должны быть в одной папке!</strong><br>
+            Если файлы находятся в разных местах, иконки и офлайн-режим не будут работать.</p>
+        </div>
+        
+        <div class="success">
+            <h3>✅ Проверка успешной установки</h3>
+            <ul class="checklist">
+                <li>Приложение открывается в полноэкранном режиме</li>
+                <li>На домашнем экране есть иконка с градиентом</li>
+                <li>Приложение работает без интернета</li>
+                <li>Данные сохраняются после закрытия</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="medication-tracker-mobile.html" class="button">🚀 Открыть приложение</a>
+            <a href="INSTALLATION_GUIDE.md" class="button">📖 Подробная инструкция</a>
+        </div>
+    </div>
+</body>
+</html>
